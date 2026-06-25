@@ -21,7 +21,7 @@ class IndexingPipelineWidget extends StatsOverviewWidget
             ->map(function (DocumentStatus $status): Stat {
                 $count = VectorDocument::query()->where('status', $status)->count();
 
-                return Stat::make($status->getLabel() ?? $status->value, (string) $count)
+                return Stat::make($status->getLabel(), (string) $count)
                     ->description('Documents in this stage');
             })
             ->all();

@@ -75,6 +75,6 @@ class SearchPlayground extends Component
 
     public function render(): View
     {
-        return view('filament-vector-search::livewire.search-playground');
+        return view()->file(__DIR__.'/../../resources/views/livewire/search-playground.blade.php');
     }
 }

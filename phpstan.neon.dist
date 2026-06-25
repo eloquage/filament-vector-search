@@ -7,3 +7,5 @@ parameters:
         - src
         - config
     tmpDir: build/phpstan
+    viewDirectories:
+        - resources/views
