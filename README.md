@@ -222,7 +222,23 @@ Register the subclass via `->dashboardPage(CustomVectorSearchDashboard::class)`.
 
 ### Policies
 
-The plugin does not ship policies. Register app-level policies on the core models:
+The plugin ships abstract base policies you can extend in your app:
+
+```php
+use Eloquage\FilamentVectorSearch\Policies\VectorDocumentPolicy as BaseVectorDocumentPolicy;
+use Eloquage\FilamentVectorSearch\Policies\VectorIndexPolicy as BaseVectorIndexPolicy;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+class VectorIndexPolicy extends BaseVectorIndexPolicy
+{
+    protected function canManage(Authenticatable $user): bool
+    {
+        return $user->hasRole('admin');
+    }
+}
+```
+
+Register the concrete policies on the core models:
 
 ```php
 use Eloquage\LaravelVectorSearch\Models\VectorDocument;
@@ -234,12 +250,7 @@ Gate::policy(VectorDocument::class, VectorDocumentPolicy::class);
 
 Filament respects `viewAny`, `view`, `create`, `update`, and `delete` automatically.
 
-Gate the index action in an extended resource:
-
-```php
-Action::make('indexDocument')
-    ->visible(fn (VectorDocument $record): bool => auth()->user()->can('update', $record))
-```
+The shared **Index document** table action already checks `auth()->user()->can('update', $record)` before showing for draft records.
 
 See `workbench/app/Policies/` for example policies used in package tests.
 

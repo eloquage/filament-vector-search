@@ -8,17 +8,16 @@ use BackedEnum;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\RelationManagers\ChunksRelationManager;
 use Eloquage\FilamentVectorSearch\Support\VectorSearchNavigation;
-use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
-use Eloquage\LaravelVectorSearch\Jobs\ProcessVectorDocument;
+use Eloquage\FilamentVectorSearch\Tables\VectorDocumentTable;
+use Eloquage\FilamentVectorSearch\Tables\VectorDocumentTableConfiguration;
 use Eloquage\LaravelVectorSearch\Models\VectorDocument;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -26,7 +25,7 @@ class VectorDocumentResource extends Resource
 {
     protected static ?string $model = VectorDocument::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     public static function getNavigationGroup(): string|UnitEnum|null
     {
@@ -60,19 +59,10 @@ class VectorDocumentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('title')->searchable()->sortable(),
-                TextColumn::make('vectorIndex.name')->label('Index')->sortable(),
-                TextColumn::make('status')->badge(),
-                TextColumn::make('chunks_count')->counts('chunks')->label('Chunks'),
-                TextColumn::make('updated_at')->dateTime()->sortable(),
-            ])
+            ->columns(VectorDocumentTable::columns(VectorDocumentTableConfiguration::forResource()))
+            ->filters(VectorDocumentTable::filters())
             ->recordActions([
-                Action::make('indexDocument')
-                    ->label('Index document')
-                    ->icon('heroicon-o-arrow-path')
-                    ->visible(fn (VectorDocument $record): bool => $record->status === DocumentStatus::DRAFT)
-                    ->action(fn (VectorDocument $record) => ProcessVectorDocument::dispatch($record)),
+                VectorDocumentTable::indexDocumentAction(),
             ])
             ->defaultSort('updated_at', 'desc');
     }

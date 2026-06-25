@@ -16,11 +16,12 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
 class VectorSearchDashboard extends Page
 {
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-magnifying-glass-circle';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlassCircle;
 
     protected static ?string $navigationLabel = 'Vector Search';
 

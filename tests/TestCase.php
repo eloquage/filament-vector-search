@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Tests;
 
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
 use Eloquage\FilamentVectorSearch\FilamentVectorSearchServiceProvider;
-use Eloquage\FilamentVectorSearch\Tests\Support\EnsureErrorBagHook;
+use Eloquage\FilamentVectorSearch\Tests\Support\RegisterErrorBagHookServiceProvider;
 use Eloquage\LaravelVectorSearch\LaravelVectorSearchServiceProvider;
+use Filament\Actions\ActionsServiceProvider;
 use Filament\Facades\Filament;
 use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
 use Filament\Support\SupportServiceProvider;
+use Filament\Tables\TablesServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
-use Livewire\Livewire;
 use Livewire\LivewireServiceProvider;
+use Livewire\Mechanisms\DataStore;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Workbench\App\Models\User;
 use Workbench\App\Providers\AdminPanelProvider;
@@ -25,16 +31,9 @@ abstract class TestCase extends Orchestra
 {
     use InteractsWithSession;
 
-    private static bool $registeredErrorBagHook = false;
-
     protected function setUp(): void
     {
         parent::setUp();
-
-        if (! self::$registeredErrorBagHook) {
-            Livewire::componentHook(EnsureErrorBagHook::class);
-            self::$registeredErrorBagHook = true;
-        }
 
         $this->startSession();
 
@@ -48,7 +47,10 @@ abstract class TestCase extends Orchestra
 
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
-        view()->share('errors', new ViewErrorBag);
+        view()->share('errors', $errors);
+
+        $dataStore = new DataStore;
+        $dataStore->register();
     }
 
     protected function actingAsAdmin(): User
@@ -62,8 +64,15 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
+            RegisterErrorBagHookServiceProvider::class,
+            BladeIconsServiceProvider::class,
+            BladeHeroiconsServiceProvider::class,
             LivewireServiceProvider::class,
             SupportServiceProvider::class,
+            ActionsServiceProvider::class,
+            FormsServiceProvider::class,
+            SchemasServiceProvider::class,
+            TablesServiceProvider::class,
             FilamentServiceProvider::class,
             LaravelVectorSearchServiceProvider::class,
             FilamentVectorSearchServiceProvider::class,

@@ -7,8 +7,9 @@ namespace Eloquage\FilamentVectorSearch\Resources;
 use BackedEnum;
 use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource\RelationManagers\DocumentsRelationManager;
+use Eloquage\FilamentVectorSearch\Support\EnumOptions;
 use Eloquage\FilamentVectorSearch\Support\VectorSearchNavigation;
-use Eloquage\LaravelVectorSearch\Contracts\HasLabel;
+use Eloquage\FilamentVectorSearch\Tables\VectorIndexTable;
 use Eloquage\LaravelVectorSearch\Enums\ChunkingStrategy;
 use Eloquage\LaravelVectorSearch\Enums\EmbeddingProvider;
 use Eloquage\LaravelVectorSearch\Enums\IndexDriver;
@@ -20,6 +21,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use UnitEnum;
@@ -28,7 +30,7 @@ class VectorIndexResource extends Resource
 {
     protected static ?string $model = VectorIndex::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getNavigationGroup(): string|UnitEnum|null
     {
@@ -46,7 +48,7 @@ class VectorIndexResource extends Resource
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         Select::make('driver')
-                            ->options(self::enumOptions(IndexDriver::cases()))
+                            ->options(EnumOptions::from(IndexDriver::cases()))
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
@@ -55,7 +57,7 @@ class VectorIndexResource extends Resource
                                 }
                             }),
                         Select::make('embedding_provider')
-                            ->options(self::enumOptions(EmbeddingProvider::cases()))
+                            ->options(EnumOptions::from(EmbeddingProvider::cases()))
                             ->required()
                             ->live(),
                         TextInput::make('embedding_model')
@@ -65,7 +67,7 @@ class VectorIndexResource extends Resource
                             ->numeric()
                             ->visible(fn (Get $get): bool => $get('driver') === IndexDriver::POSTGRES_VECTOR->value),
                         Select::make('chunking_strategy')
-                            ->options(self::enumOptions(ChunkingStrategy::cases()))
+                            ->options(EnumOptions::from(ChunkingStrategy::cases()))
                             ->required(),
                         TextInput::make('chunk_size')
                             ->numeric()
@@ -90,6 +92,7 @@ class VectorIndexResource extends Resource
                 TextColumn::make('embedding_model'),
                 TextColumn::make('documents_count')->counts('documents')->label('Documents'),
             ])
+            ->filters(VectorIndexTable::filters())
             ->defaultSort('name');
     }
 
@@ -107,20 +110,5 @@ class VectorIndexResource extends Resource
             'create' => Pages\CreateVectorIndex::route('/create'),
             'edit' => Pages\EditVectorIndex::route('/{record}/edit'),
         ];
-    }
-
-    /**
-     * @param  array<BackedEnum&HasLabel>  $cases
-     * @return array<string, string>
-     */
-    protected static function enumOptions(array $cases): array
-    {
-        $options = [];
-
-        foreach ($cases as $case) {
-            $options[$case->value] = $case->getLabel();
-        }
-
-        return $options;
     }
 }

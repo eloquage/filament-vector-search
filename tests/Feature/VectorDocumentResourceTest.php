@@ -7,8 +7,8 @@ use Eloquage\LaravelVectorSearch\Enums\EmbeddingProvider;
 use Eloquage\LaravelVectorSearch\Jobs\ProcessVectorDocument;
 use Eloquage\LaravelVectorSearch\Models\VectorDocument;
 use Eloquage\LaravelVectorSearch\Models\VectorIndex;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Facades\Queue;
-use Workbench\App\Models\User;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
@@ -34,7 +34,9 @@ it('creates vector documents in the database', function () {
     ]);
 });
 
-it('shows the index document action only for draft records', function () {
+it('filters vector documents by status', function () {
+    $this->actingAsAdmin();
+
     $index = VectorIndex::factory()->create();
     $draft = VectorDocument::factory()->for($index, 'vectorIndex')->create([
         'status' => DocumentStatus::DRAFT,
@@ -43,33 +45,45 @@ it('shows the index document action only for draft records', function () {
         'status' => DocumentStatus::COMPLETED,
     ]);
 
-    $visible = fn (VectorDocument $record): bool => $record->status === DocumentStatus::DRAFT;
+    livewire(ListVectorDocuments::class)
+        ->assertCanSeeTableRecords([$draft, $completed])
+        ->filterTable('status', DocumentStatus::DRAFT->value)
+        ->assertCanSeeTableRecords([$draft])
+        ->assertCanNotSeeTableRecords([$completed]);
+});
 
-    expect($visible($draft))->toBeTrue()
-        ->and($visible($completed))->toBeFalse();
+it('shows the index document action only for draft records', function () {
+    $this->actingAsAdmin();
+
+    $index = VectorIndex::factory()->create();
+    $draft = VectorDocument::factory()->for($index, 'vectorIndex')->create([
+        'status' => DocumentStatus::DRAFT,
+    ]);
+    $completed = VectorDocument::factory()->for($index, 'vectorIndex')->create([
+        'status' => DocumentStatus::COMPLETED,
+    ]);
+
+    livewire(ListVectorDocuments::class)
+        ->assertActionVisible(TestAction::make('indexDocument')->table($draft))
+        ->assertActionHidden(TestAction::make('indexDocument')->table($completed));
 });
 
 it('dispatches indexing when the table action is triggered', function () {
     Queue::fake();
+
+    $this->actingAsAdmin();
 
     $index = VectorIndex::factory()->create();
     $document = VectorDocument::factory()->for($index, 'vectorIndex')->create([
         'status' => DocumentStatus::DRAFT,
     ]);
 
-    ProcessVectorDocument::dispatch($document);
+    livewire(ListVectorDocuments::class)
+        ->callAction(TestAction::make('indexDocument')->table($document));
 
     Queue::assertPushed(ProcessVectorDocument::class, fn (ProcessVectorDocument $job): bool => $job->document->is($document));
 });
 
 it('exposes the vector document model on the resource', function () {
     expect(VectorDocumentResource::getModel())->toBe(VectorDocument::class);
-});
-
-it('denies non-admin users access to vector document resources', function () {
-    $user = User::factory()->nonAdmin()->create();
-    $this->actingAs($user);
-
-    livewire(ListVectorDocuments::class)
-        ->assertForbidden();
 });

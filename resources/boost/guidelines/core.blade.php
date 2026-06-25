@@ -41,6 +41,10 @@ Filament v5 plugin for `eloquage/laravel-vector-search`.
 
 Fluent API on `VectorSearchPlugin`: `navigationGroup()`, `dashboardPage()`, `indexResource()`, `documentResource()`, `widgets()`.
 
+Shared table builders: `VectorIndexTable`, `VectorDocumentTable`, and `VectorDocumentTableConfiguration` centralize filters, columns, and the index action.
+
+Abstract policies: extend `VectorIndexPolicy` and `VectorDocumentPolicy`, implement `canManage()`, and register on the core models.
+
 Subclass pages/resources for icons (`Heroicon` enum) and extra fields. Register policies on `VectorIndex` / `VectorDocument` in the host app.
 
 ## Prerequisites

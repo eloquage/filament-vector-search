@@ -38,7 +38,7 @@ it('searches when the query has at least three characters', function () {
         'status' => DocumentStatus::COMPLETED,
     ]);
     $embedding = app(EmbeddingProviderManager::class)
-        ->forIndex($index)
+        ->driver(EmbeddingProvider::NULL_PROVIDER->value)
         ->embed('deployment guide');
 
     VectorChunk::factory()->for($document, 'vectorDocument')->create([
@@ -77,7 +77,7 @@ it('re-runs search when the index changes', function () {
         'status' => DocumentStatus::COMPLETED,
     ]);
     $embedding = app(EmbeddingProviderManager::class)
-        ->forIndex($secondIndex)
+        ->driver(EmbeddingProvider::NULL_PROVIDER->value)
         ->embed('kubernetes');
 
     VectorChunk::factory()->for($document, 'vectorDocument')->create([
@@ -108,7 +108,7 @@ it('respects the result limit', function () {
         'status' => DocumentStatus::COMPLETED,
     ]);
     $embedding = app(EmbeddingProviderManager::class)
-        ->forIndex($index)
+        ->driver(EmbeddingProvider::NULL_PROVIDER->value)
         ->embed('laravel');
 
     foreach (range(0, 4) as $chunkIndex) {

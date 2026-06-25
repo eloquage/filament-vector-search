@@ -1,12 +1,14 @@
 <?php
 
 use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource;
+use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource\Pages\ListVectorIndexes;
 use Eloquage\LaravelVectorSearch\Enums\ChunkingStrategy;
 use Eloquage\LaravelVectorSearch\Enums\EmbeddingProvider;
 use Eloquage\LaravelVectorSearch\Enums\IndexDriver;
 use Eloquage\LaravelVectorSearch\Models\VectorIndex;
 
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
 
 it('persists postgres vector indexes with dimensions', function () {
     VectorIndex::query()->create([
@@ -42,4 +44,21 @@ it('lists vector indexes in the database', function () {
     $indexes = VectorIndex::factory()->count(2)->create();
 
     expect(VectorIndex::query()->whereKey($indexes->pluck('id'))->count())->toBe(2);
+});
+
+it('filters vector indexes by driver', function () {
+    $this->actingAsAdmin();
+
+    $postgres = VectorIndex::factory()->create([
+        'driver' => IndexDriver::POSTGRES_VECTOR,
+    ]);
+    $meilisearch = VectorIndex::factory()->create([
+        'driver' => IndexDriver::MEILISEARCH,
+    ]);
+
+    livewire(ListVectorIndexes::class)
+        ->assertCanSeeTableRecords([$postgres, $meilisearch])
+        ->filterTable('driver', IndexDriver::POSTGRES_VECTOR->value)
+        ->assertCanSeeTableRecords([$postgres])
+        ->assertCanNotSeeTableRecords([$meilisearch]);
 });
