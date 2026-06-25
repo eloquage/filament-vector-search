@@ -26,7 +26,15 @@ class SearchPlayground extends Component
     {
         $this->resetErrorBag();
         $this->results = collect();
-        $this->indexId = VectorIndex::query()->value('id');
+
+        $preferredName = config('document-archive.vector_index');
+        $preferredName = is_string($preferredName) && $preferredName !== '' ? $preferredName : null;
+
+        $this->indexId = $preferredName !== null
+            ? VectorIndex::query()->where('name', $preferredName)->value('id')
+            : null;
+
+        $this->indexId ??= VectorIndex::query()->value('id');
     }
 
     public function search(): void
