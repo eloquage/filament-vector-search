@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Tests;
 
-use Eloquage\FilamentVectorSearch\Tests\Support\EnsureErrorBagHook;
 use Eloquage\FilamentVectorSearch\FilamentVectorSearchServiceProvider;
+use Eloquage\FilamentVectorSearch\Tests\Support\EnsureErrorBagHook;
 use Eloquage\LaravelVectorSearch\LaravelVectorSearchServiceProvider;
 use Filament\Facades\Filament;
 use Filament\FilamentServiceProvider;
