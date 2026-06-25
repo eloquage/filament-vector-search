@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Resources;
 
+use BackedEnum;
 use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource\RelationManagers\DocumentsRelationManager;
+use Eloquage\LaravelVectorSearch\Contracts\HasLabel;
 use Eloquage\LaravelVectorSearch\Enums\ChunkingStrategy;
 use Eloquage\LaravelVectorSearch\Enums\EmbeddingProvider;
 use Eloquage\LaravelVectorSearch\Enums\IndexDriver;
@@ -19,7 +21,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use BackedEnum;
 
 class VectorIndexResource extends Resource
 {
@@ -104,7 +105,7 @@ class VectorIndexResource extends Resource
     }
 
     /**
-     * @param  array<\BackedEnum&\Eloquage\LaravelVectorSearch\Contracts\HasLabel>  $cases
+     * @param  array<BackedEnum&HasLabel>  $cases
      * @return array<string, string>
      */
     protected static function enumOptions(array $cases): array

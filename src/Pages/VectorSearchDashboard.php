@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Pages;
 
+use BackedEnum;
+use Eloquage\FilamentVectorSearch\Livewire\SearchPlayground;
 use Eloquage\FilamentVectorSearch\Widgets\IndexingPipelineWidget;
 use Eloquage\FilamentVectorSearch\Widgets\VectorEngineStatsWidget;
 use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
@@ -13,7 +15,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use BackedEnum;
 
 class VectorSearchDashboard extends Page
 {
@@ -43,7 +44,7 @@ class VectorSearchDashboard extends Page
                         Section::make('Semantic search')
                             ->description('Query your knowledge base in real time.')
                             ->schema([
-                                Livewire::make(\Eloquage\FilamentVectorSearch\Livewire\SearchPlayground::class),
+                                Livewire::make(SearchPlayground::class),
                             ])
                             ->columnSpanFull(),
                         Section::make('Recent failures')

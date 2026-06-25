@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Resources;
 
+use BackedEnum;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\RelationManagers\ChunksRelationManager;
 use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
@@ -18,7 +19,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use BackedEnum;
 
 class VectorDocumentResource extends Resource
 {

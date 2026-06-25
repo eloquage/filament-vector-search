@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Widgets;
 
-use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
 use Eloquage\LaravelVectorSearch\Models\VectorChunk;
 use Eloquage\LaravelVectorSearch\Models\VectorDocument;
 use Eloquage\LaravelVectorSearch\Models\VectorIndex;
