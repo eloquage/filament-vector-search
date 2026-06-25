@@ -37,7 +37,7 @@ it('rejects invalid dashboard page classes', function () {
     $method->setAccessible(true);
 
     expect(fn () => $method->invoke($plugin))
-        ->toThrow(\InvalidArgumentException::class);
+        ->toThrow(InvalidArgumentException::class);
 });
 
 it('rejects invalid widget classes', function () {
@@ -48,7 +48,7 @@ it('rejects invalid widget classes', function () {
     $method->setAccessible(true);
 
     expect(fn () => $method->invoke($plugin))
-        ->toThrow(\InvalidArgumentException::class);
+        ->toThrow(InvalidArgumentException::class);
 });
 
 it('registers custom widgets through the fluent api', function () {
