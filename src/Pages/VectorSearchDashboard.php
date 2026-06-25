@@ -6,17 +6,23 @@ namespace Eloquage\FilamentVectorSearch\Pages;
 
 use BackedEnum;
 use Eloquage\FilamentVectorSearch\Livewire\SearchPlayground;
+use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource;
 use Eloquage\FilamentVectorSearch\Support\VectorSearchNavigation;
 use Eloquage\FilamentVectorSearch\Widgets\IndexingPipelineWidget;
 use Eloquage\FilamentVectorSearch\Widgets\VectorEngineStatsWidget;
 use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
 use Eloquage\LaravelVectorSearch\Models\VectorDocument;
+use Eloquage\LaravelVectorSearch\Models\VectorIndex;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Html;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use UnitEnum;
 
 class VectorSearchDashboard extends Page
@@ -38,6 +44,18 @@ class VectorSearchDashboard extends Page
         return VectorSearchNavigation::group();
     }
 
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+
+        if ($user === null) {
+            return false;
+        }
+
+        return $user->can('viewAny', VectorIndex::class)
+            || $user->can('viewAny', VectorDocument::class);
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -51,11 +69,8 @@ class VectorSearchDashboard extends Page
                             ])
                             ->columnSpanFull(),
                         Section::make('Recent failures')
-                            ->schema([
-                                Section::make()
-                                    ->heading('Latest indexing errors')
-                                    ->description($this->recentFailuresDescription()),
-                            ])
+                            ->description('Latest documents that failed during indexing.')
+                            ->schema($this->recentFailureComponents())
                             ->columnSpan(1),
                     ])
                     ->columns(3),
@@ -73,20 +88,41 @@ class VectorSearchDashboard extends Page
         ];
     }
 
-    protected function recentFailuresDescription(): string
+    /**
+     * @return array<int, Text|Html>
+     */
+    protected function recentFailureComponents(): array
     {
-        $failures = VectorDocument::query()
+        $failures = $this->recentFailures();
+
+        if ($failures->isEmpty()) {
+            return [
+                Text::make('No failed documents. Your pipeline looks healthy.'),
+            ];
+        }
+
+        return $failures
+            ->map(function (VectorDocument $document): Html {
+                $editUrl = e(VectorDocumentResource::getUrl('edit', ['record' => $document]));
+                $title = e((string) $document->title);
+                $error = e(str((string) $document->error_log)->limit(120)->toString());
+
+                return Html::make(new HtmlString(
+                    "<p class=\"text-sm\"><a href=\"{$editUrl}\" class=\"font-medium text-primary-600 hover:underline dark:text-primary-400\">{$title}</a>: <span class=\"text-gray-600 dark:text-gray-300\">{$error}</span></p>"
+                ));
+            })
+            ->all();
+    }
+
+    /**
+     * @return Collection<int, VectorDocument>
+     */
+    protected function recentFailures(): Collection
+    {
+        return VectorDocument::query()
             ->where('status', DocumentStatus::FAILED)
             ->latest()
             ->limit(3)
             ->get();
-
-        if ($failures->isEmpty()) {
-            return 'No failed documents. Your pipeline looks healthy.';
-        }
-
-        return $failures
-            ->map(fn (VectorDocument $document): string => "{$document->title}: ".str($document->error_log)->limit(120))
-            ->implode("\n");
     }
 }

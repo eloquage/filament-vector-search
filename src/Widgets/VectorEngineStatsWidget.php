@@ -16,6 +16,8 @@ class VectorEngineStatsWidget extends StatsOverviewWidget
 {
     protected static ?int $sort = 1;
 
+    protected ?string $pollingInterval = '30s';
+
     protected function getStats(): array
     {
         $queueSize = 0;

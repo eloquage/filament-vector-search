@@ -97,6 +97,12 @@ For pgvector, optionally publish and run the HNSW index migration stub from the 
 composer require eloquage/filament-vector-search
 ```
 
+Publish config (optional):
+
+```bash
+php artisan vendor:publish --tag=filament-vector-search-config
+```
+
 Register on your panel:
 
 ```php
@@ -154,6 +160,52 @@ VectorSearchPlugin::make()
 | `indexResource()`    | Replace the index resource class              |
 | `documentResource()` | Replace the document resource class           |
 | `widgets()`          | Replace dashboard header widgets              |
+
+## Configuration
+
+| Key                        | Env                                          | Purpose                                                               |
+| -------------------------- | -------------------------------------------- | --------------------------------------------------------------------- |
+| `default_playground_index` | `FILAMENT_VECTOR_SEARCH_DEFAULT_INDEX`       | Preferred index name for the search playground                        |
+| `archive.enabled`          | `FILAMENT_VECTOR_SEARCH_ARCHIVE_INTEGRATION` | Enable document-archive metadata columns and actions (default `true`) |
+| `widgets.polling_interval` | `FILAMENT_VECTOR_SEARCH_WIDGET_POLLING`      | Dashboard widget polling interval (default `30s`)                     |
+
+When archive integration is enabled and `eloquage/laravel-document-archive` is installed, the plugin reads `document-archive.vector_index` for the default playground index.
+
+## Bulk actions
+
+On the documents table:
+
+- **Index selected** — dispatches `ProcessVectorDocument` for selected `draft` rows (requires `update` policy).
+- **Re-index failed** — clears `error_log` and re-queues failed documents.
+
+Header action **Re-index all failed** appears when any failed documents exist.
+
+## Document archive integration (optional)
+
+When `eloquage/laravel-document-archive` and/or `eloquage/laravel-document-archive-ai` are installed:
+
+| Feature                                                                 | When visible                                                       |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Metadata columns (`collection`, `canonical_basename`, archive `status`) | `archive.enabled=true` and `ManifestService` is bound              |
+| **View manifest** row action                                            | Document has `metadata.collection` + `metadata.canonical_basename` |
+| **Correlate** row/header actions                                        | `CorrelationAgent` class is available                              |
+| Collection filter                                                       | Archive integration active                                         |
+
+Index naming aligns with `document-archive.vector_index` (default `document-archive`), matching `eloquage/laravel-document-archive-vector`.
+
+Disable integration without uninstalling archive packages:
+
+```dotenv
+FILAMENT_VECTOR_SEARCH_ARCHIVE_INTEGRATION=false
+```
+
+## Third-party recipes
+
+See [docs/third-party-evaluation.md](docs/third-party-evaluation.md) for guidance on:
+
+- **spatie/laravel-permission** — implement `canManage()` in concrete policies (document-only; no package dependency)
+- **spatie/laravel-activitylog** — log changes on core `VectorDocument` / `VectorIndex` models in the host app
+- **filament/spatie-laravel-media-library-plugin** — skipped; vector documents use text content, not media uploads
 
 ## Dashboard and semantic search playground
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Tables;
 
+use Eloquage\FilamentVectorSearch\Support\ArchiveIntegration;
+
 final class VectorDocumentTableConfiguration
 {
     public function __construct(
@@ -11,6 +13,7 @@ final class VectorDocumentTableConfiguration
         public bool $searchableTitle = true,
         public bool $sortableTitle = true,
         public bool $sortableUpdatedAt = true,
+        public bool $includeArchiveColumns = false,
     ) {}
 
     public static function forResource(): self
@@ -20,6 +23,7 @@ final class VectorDocumentTableConfiguration
             searchableTitle: true,
             sortableTitle: true,
             sortableUpdatedAt: true,
+            includeArchiveColumns: ArchiveIntegration::isAvailable(),
         );
     }
 
@@ -30,6 +34,7 @@ final class VectorDocumentTableConfiguration
             searchableTitle: true,
             sortableTitle: false,
             sortableUpdatedAt: false,
+            includeArchiveColumns: false,
         );
     }
 }

@@ -17,6 +17,7 @@ class FilamentVectorSearchServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
+            ->hasConfigFile()
             ->hasViews();
     }
 

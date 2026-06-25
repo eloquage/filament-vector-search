@@ -1,6 +1,6 @@
 # Filament Vector Search Plugin
 
-Filament v5 plugin for `eloquage/laravel-vector-search`.
+Filament v5 admin plugin for `eloquage/laravel-vector-search`.
 
 ## Registration
 
@@ -11,7 +11,7 @@ Filament v5 plugin for `eloquage/laravel-vector-search`.
 )
 ```
 
-## Registered artifacts
+## Artifacts
 
 | Type | Class |
 |------|-------|
@@ -21,32 +21,39 @@ Filament v5 plugin for `eloquage/laravel-vector-search`.
 | Playground | `SearchPlayground` (Livewire) |
 | Widgets | `VectorEngineStatsWidget`, `IndexingPipelineWidget` |
 
+## Config
+
+Publish: `php artisan vendor:publish --tag=filament-vector-search-config`
+
+| Key | Purpose |
+|-----|---------|
+| `default_playground_index` | Preferred playground index name |
+| `archive.enabled` | Soft coupling to document-archive metadata/actions |
+| `widgets.polling_interval` | Stats widget refresh interval |
+
+## Document archive bridge
+
+Optional UI when `ManifestService` / `CorrelationAgent` are available:
+
+- `ArchiveIntegration` — feature detection without hard dependencies
+- `OpenManifestAction` — manifest lookup modal
+- `CorrelateDocumentAction` — `CorrelationAgent` modal on list/header
+
+## Shared table builders
+
+- `VectorIndexTable` — index columns and filters
+- `VectorDocumentTable` — document columns, filters, bulk index/re-index actions
+- `VectorDocumentTableConfiguration` — resource vs relation manager column sets
+
+## Policies
+
+Extend `VectorIndexPolicy` / `VectorDocumentPolicy` and register on core models. Dashboard access uses `viewAny` on `VectorIndex` or `VectorDocument`.
+
 ## Filament 5 namespaces
 
 | Use | Namespace |
 |-----|-----------|
 | Form fields | `Filament\Forms\Components\` |
 | Layout / schema | `Filament\Schemas\Components\` |
-| Utilities | `Filament\Schemas\Components\Utilities\` (`Get`, `Set`) |
 | Table columns | `Filament\Tables\Columns\` |
 | Actions | `Filament\Actions\` |
-
-## SearchPlayground
-
-- Debounced live search at 3+ characters (`wire:model.live.debounce.500ms`)
-- `LaravelVectorSearch::forIndex($index)->search($query, $limit)`
-- Livewire alias: `filament-vector-search.search-playground`
-
-## Customization
-
-Fluent API on `VectorSearchPlugin`: `navigationGroup()`, `dashboardPage()`, `indexResource()`, `documentResource()`, `widgets()`.
-
-Shared table builders: `VectorIndexTable`, `VectorDocumentTable`, and `VectorDocumentTableConfiguration` centralize filters, columns, and the index action.
-
-Abstract policies: extend `VectorIndexPolicy` and `VectorDocumentPolicy`, implement `canManage()`, and register on the core models.
-
-Subclass pages/resources for icons (`Heroicon` enum) and extra fields. Register policies on `VectorIndex` / `VectorDocument` in the host app.
-
-## Prerequisites
-
-Install and migrate `eloquage/laravel-vector-search` and run a queue worker before using the Filament plugin.

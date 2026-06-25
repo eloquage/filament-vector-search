@@ -16,6 +16,7 @@ use Filament\Forms\FormsServiceProvider;
 use Filament\Schemas\SchemasServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
+use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Support\MessageBag;
@@ -73,6 +74,7 @@ abstract class TestCase extends Orchestra
             FormsServiceProvider::class,
             SchemasServiceProvider::class,
             TablesServiceProvider::class,
+            WidgetsServiceProvider::class,
             FilamentServiceProvider::class,
             LaravelVectorSearchServiceProvider::class,
             FilamentVectorSearchServiceProvider::class,
@@ -95,6 +97,8 @@ abstract class TestCase extends Orchestra
         $app['config']->set('queue.default', 'sync');
         $app['config']->set('vector-search.default_embedding_provider', 'null');
         $app['config']->set('vector-search.testing.embedding_dimensions', 8);
+
+        $app['config']->set('filament-vector-search.archive.enabled', false);
 
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('auth.guards.web.provider', 'users');

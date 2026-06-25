@@ -14,6 +14,7 @@ use Eloquage\LaravelVectorSearch\Enums\ChunkingStrategy;
 use Eloquage\LaravelVectorSearch\Enums\EmbeddingProvider;
 use Eloquage\LaravelVectorSearch\Enums\IndexDriver;
 use Eloquage\LaravelVectorSearch\Models\VectorIndex;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -22,7 +23,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -85,15 +85,19 @@ class VectorIndexResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('name')->searchable()->sortable(),
-                TextColumn::make('driver')->badge(),
-                TextColumn::make('embedding_provider')->badge(),
-                TextColumn::make('embedding_model'),
-                TextColumn::make('documents_count')->counts('documents')->label('Documents'),
-            ])
+            ->columns(VectorIndexTable::columns())
             ->filters(VectorIndexTable::filters())
-            ->defaultSort('name');
+            ->defaultSort('name')
+            ->emptyStateHeading('No vector indexes')
+            ->emptyStateDescription('Create an index to configure drivers, embedding providers, and chunking strategies.')
+            ->emptyStateIcon(Heroicon::OutlinedRectangleStack)
+            ->emptyStateActions([
+                Action::make('create')
+                    ->label('Create index')
+                    ->url(fn (): string => static::getUrl('create'))
+                    ->icon(Heroicon::OutlinedPlus)
+                    ->button(),
+            ]);
     }
 
     public static function getRelations(): array

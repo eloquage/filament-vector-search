@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Eloquage\FilamentVectorSearch\Livewire;
 
+use Eloquage\FilamentVectorSearch\Support\DefaultPlaygroundIndexResolver;
 use Eloquage\LaravelVectorSearch\Facades\LaravelVectorSearch;
 use Eloquage\LaravelVectorSearch\Models\VectorChunk;
 use Eloquage\LaravelVectorSearch\Models\VectorIndex;
@@ -22,19 +23,11 @@ class SearchPlayground extends Component
     /** @var Collection<int, VectorChunk> */
     public Collection $results;
 
-    public function mount(): void
+    public function mount(DefaultPlaygroundIndexResolver $indexResolver): void
     {
         $this->resetErrorBag();
         $this->results = collect();
-
-        $preferredName = config('document-archive.vector_index');
-        $preferredName = is_string($preferredName) && $preferredName !== '' ? $preferredName : null;
-
-        $this->indexId = $preferredName !== null
-            ? VectorIndex::query()->where('name', $preferredName)->value('id')
-            : null;
-
-        $this->indexId ??= VectorIndex::query()->value('id');
+        $this->indexId = $indexResolver->resolve();
     }
 
     public function search(): void
@@ -53,7 +46,16 @@ class SearchPlayground extends Component
             return;
         }
 
-        $this->results = LaravelVectorSearch::forIndex($index)->search($this->query, $this->limit);
+        $results = LaravelVectorSearch::forIndex($index)->search($this->query, $this->limit);
+
+        if ($results->isNotEmpty()) {
+            $results = VectorChunk::query()
+                ->whereIn('id', $results->pluck('id'))
+                ->with('vectorDocument')
+                ->get();
+        }
+
+        $this->results = $results;
     }
 
     public function updatedQuery(): void

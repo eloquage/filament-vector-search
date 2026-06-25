@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Eloquage\FilamentVectorSearch\Resources;
 
 use BackedEnum;
+use Eloquage\FilamentVectorSearch\Pages\VectorSearchDashboard;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\RelationManagers\ChunksRelationManager;
 use Eloquage\FilamentVectorSearch\Support\VectorSearchNavigation;
 use Eloquage\FilamentVectorSearch\Tables\VectorDocumentTable;
 use Eloquage\FilamentVectorSearch\Tables\VectorDocumentTableConfiguration;
 use Eloquage\LaravelVectorSearch\Models\VectorDocument;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -61,10 +63,24 @@ class VectorDocumentResource extends Resource
         return $table
             ->columns(VectorDocumentTable::columns(VectorDocumentTableConfiguration::forResource()))
             ->filters(VectorDocumentTable::filters())
-            ->recordActions([
-                VectorDocumentTable::indexDocumentAction(),
-            ])
-            ->defaultSort('updated_at', 'desc');
+            ->toolbarActions(VectorDocumentTable::toolbarActions())
+            ->recordActions(VectorDocumentTable::recordActions())
+            ->defaultSort('updated_at', 'desc')
+            ->emptyStateHeading('No vector documents')
+            ->emptyStateDescription('Add a document with title and content, then index it to embed chunks for semantic search.')
+            ->emptyStateIcon(Heroicon::OutlinedDocumentText)
+            ->emptyStateActions([
+                Action::make('create')
+                    ->label('Create document')
+                    ->url(fn (): string => static::getUrl('create'))
+                    ->icon(Heroicon::OutlinedPlus)
+                    ->button(),
+                Action::make('playground')
+                    ->label('Open search playground')
+                    ->url(fn (): string => VectorSearchDashboard::getUrl())
+                    ->icon(Heroicon::OutlinedMagnifyingGlassCircle)
+                    ->link(),
+            ]);
     }
 
     public static function getRelations(): array
