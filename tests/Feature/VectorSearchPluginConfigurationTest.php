@@ -10,7 +10,6 @@ use Eloquage\FilamentVectorSearch\Widgets\VectorEngineStatsWidget;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
-use InvalidArgumentException;
 
 it('registers the vector search plugin', function () {
     expect(VectorSearchPlugin::make())
@@ -38,7 +37,7 @@ it('rejects invalid dashboard page classes', function () {
     $method->setAccessible(true);
 
     expect(fn () => $method->invoke($plugin))
-        ->toThrow(InvalidArgumentException::class);
+        ->toThrow(\InvalidArgumentException::class);
 });
 
 it('rejects invalid widget classes', function () {
@@ -49,7 +48,7 @@ it('rejects invalid widget classes', function () {
     $method->setAccessible(true);
 
     expect(fn () => $method->invoke($plugin))
-        ->toThrow(InvalidArgumentException::class);
+        ->toThrow(\InvalidArgumentException::class);
 });
 
 it('registers custom widgets through the fluent api', function () {
