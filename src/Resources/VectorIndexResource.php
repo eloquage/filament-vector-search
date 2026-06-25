@@ -7,6 +7,7 @@ namespace Eloquage\FilamentVectorSearch\Resources;
 use BackedEnum;
 use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorIndexResource\RelationManagers\DocumentsRelationManager;
+use Eloquage\FilamentVectorSearch\Support\VectorSearchNavigation;
 use Eloquage\LaravelVectorSearch\Contracts\HasLabel;
 use Eloquage\LaravelVectorSearch\Enums\ChunkingStrategy;
 use Eloquage\LaravelVectorSearch\Enums\EmbeddingProvider;
@@ -21,6 +22,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class VectorIndexResource extends Resource
 {
@@ -28,7 +30,10 @@ class VectorIndexResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Vector Search';
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return VectorSearchNavigation::group();
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -113,7 +118,7 @@ class VectorIndexResource extends Resource
         $options = [];
 
         foreach ($cases as $case) {
-            $options[$case->value] = $case->getLabel() ?? $case->value;
+            $options[$case->value] = $case->getLabel();
         }
 
         return $options;

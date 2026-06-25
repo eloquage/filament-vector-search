@@ -6,6 +6,7 @@ namespace Eloquage\FilamentVectorSearch\Pages;
 
 use BackedEnum;
 use Eloquage\FilamentVectorSearch\Livewire\SearchPlayground;
+use Eloquage\FilamentVectorSearch\Support\VectorSearchNavigation;
 use Eloquage\FilamentVectorSearch\Widgets\IndexingPipelineWidget;
 use Eloquage\FilamentVectorSearch\Widgets\VectorEngineStatsWidget;
 use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
@@ -15,6 +16,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use UnitEnum;
 
 class VectorSearchDashboard extends Page
 {
@@ -30,9 +32,9 @@ class VectorSearchDashboard extends Page
 
     protected string $view = 'filament-vector-search::pages.vector-search-dashboard';
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string|UnitEnum|null
     {
-        return 'Vector Search';
+        return VectorSearchNavigation::group();
     }
 
     public function content(Schema $schema): Schema

@@ -7,10 +7,14 @@ namespace Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource;
 use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
 use Eloquage\LaravelVectorSearch\Jobs\ProcessVectorDocument;
+use Eloquage\LaravelVectorSearch\Models\VectorDocument;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
+/**
+ * @property VectorDocument $record
+ */
 class EditVectorDocument extends EditRecord
 {
     protected static string $resource = VectorDocumentResource::class;

@@ -7,6 +7,7 @@ namespace Eloquage\FilamentVectorSearch\Resources;
 use BackedEnum;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\Pages;
 use Eloquage\FilamentVectorSearch\Resources\VectorDocumentResource\RelationManagers\ChunksRelationManager;
+use Eloquage\FilamentVectorSearch\Support\VectorSearchNavigation;
 use Eloquage\LaravelVectorSearch\Enums\DocumentStatus;
 use Eloquage\LaravelVectorSearch\Jobs\ProcessVectorDocument;
 use Eloquage\LaravelVectorSearch\Models\VectorDocument;
@@ -19,6 +20,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class VectorDocumentResource extends Resource
 {
@@ -26,7 +28,10 @@ class VectorDocumentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Vector Search';
+    public static function getNavigationGroup(): string|UnitEnum|null
+    {
+        return VectorSearchNavigation::group();
+    }
 
     public static function form(Schema $schema): Schema
     {

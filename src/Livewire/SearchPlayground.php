@@ -24,6 +24,7 @@ class SearchPlayground extends Component
 
     public function mount(): void
     {
+        $this->resetErrorBag();
         $this->results = collect();
         $this->indexId = VectorIndex::query()->value('id');
     }
