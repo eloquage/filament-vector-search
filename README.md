@@ -1,5 +1,7 @@
 # Filament Vector Search
 
+![Filament Vector Search package banner](package-banner.png)
+
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/eloquage/filament-vector-search.svg?style=flat-square)](https://packagist.org/packages/eloquage/filament-vector-search)
 [![GitHub Tests Action Status](https://github.com/eloquage/filament-vector-search/actions/workflows/run-tests.yml/badge.svg)](https://github.com/eloquage/filament-vector-search/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/eloquage/filament-vector-search.svg?style=flat-square)](https://packagist.org/packages/eloquage/filament-vector-search)

@@ -4,6 +4,15 @@ All notable changes to `filament-vector-search` will be documented in this file.
 
 ## Unreleased
 
+### Changed
+
+- Require a stable `^1.0` release of the core vector search package.
+- Add a package banner to the README.
+
+### Changed
+
+- Add a package banner to the README.
+
 ### Added
 
 - Fluent `VectorSearchPlugin` customization: `navigationGroup()`, `dashboardPage()`, `indexResource()`, `documentResource()`, `widgets()`
