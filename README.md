@@ -1,6 +1,6 @@
 # Filament Vector Search
 
-![Filament Vector Search package banner](package-banner.png)
+![Filament Vector Search package banner](art/banner.png)
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/eloquage/filament-vector-search.svg?style=flat-square)](https://packagist.org/packages/eloquage/filament-vector-search)
 [![GitHub Tests Action Status](https://github.com/eloquage/filament-vector-search/actions/workflows/run-tests.yml/badge.svg)](https://github.com/eloquage/filament-vector-search/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -45,14 +45,14 @@ composer require eloquage/laravel-vector-search
 Publish and migrate:
 
 ```bash
-php artisan vendor:publish --tag=laravel-vector-search-migrations
+php artisan vendor:publish --tag=vector-search-migrations
 php artisan migrate
 ```
 
 Optionally publish config:
 
 ```bash
-php artisan vendor:publish --tag=laravel-vector-search-config
+php artisan vendor:publish --provider="Eloquage\LaravelVectorSearch\LaravelVectorSearchServiceProvider"
 ```
 
 Configure `.env` for your driver and embedding provider. Examples:
