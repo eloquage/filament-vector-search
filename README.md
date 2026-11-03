@@ -224,10 +224,6 @@ See [docs/third-party-evaluation.md](docs/third-party-evaluation.md) for guidanc
 - Configurable result limit (default 5, max 20 in UI)
 - Uses `LaravelVectorSearch::forIndex($index)->search($query, $limit)`
 
-![Vector Search dashboard with semantic query and result cards](docs/images/01-dashboard-playground.png)
-
-![Indexing pipeline widget showing document status counts](docs/images/06-pipeline-widget.png)
-
 ## Resources
 
 ### VectorIndexResource
@@ -236,10 +232,6 @@ Fields: name, driver, embedding provider, embedding model, dimensions (pgvector 
 
 Includes a documents relation manager.
 
-![Vector indexes list with driver and embedding badges](docs/images/02-indexes-list.png)
-
-![Create vector index form](docs/images/03-create-index.png)
-
 ### VectorDocumentResource
 
 Fields: index, title, content (textarea).
@@ -247,10 +239,6 @@ Fields: index, title, content (textarea).
 Table action **Index document** appears for `draft` records and dispatches `ProcessVectorDocument`.
 
 Includes a chunks relation manager (paginated 10/25/50).
-
-![Vector documents list with status badges](docs/images/04-documents-list.png)
-
-![Document edit page with chunks relation manager](docs/images/05-document-chunks.png)
 
 ## Customization
 
